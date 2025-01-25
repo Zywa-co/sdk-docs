@@ -2,8 +2,8 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "Cozmox-AI Nebula SDK",
   "logo": {
-    "dark": "/logo/logo_light.svg",
-    "light": "/logo/logo.svg"
+    "dark": "/logo/logo_dark.svg",
+    "light": "/logo/logo_light.svg"
   },
   "favicon": "/logo/favicon.ico",
   "colors": {
