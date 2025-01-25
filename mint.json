@@ -37,7 +37,7 @@
       "openapi": "https://api.cozmox.cloud/api-json",
       "url": "api-reference",
       "icon": "square-terminal"
-    },
+    }
   ],
   "navigation": [
     {
