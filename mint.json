@@ -5,7 +5,7 @@
     "dark": "/logo/logo_light.svg",
     "light": "/logo/logo.svg"
   },
-  "favicon": "https://v2.cozmox.ai/fav.png",
+  "favicon": "/logo/favicon.png",
   "colors": {
     "primary": "#FF5911",
     "light": "#FF5911",
