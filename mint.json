@@ -45,6 +45,12 @@
       "pages": [
         "api-reference/introduction"
       ]
+    },
+    {
+      "group": "Webhooks",
+      "pages": [
+        "api-reference/webhooks"
+      ]
     }
   ],
   "footerSocials": {

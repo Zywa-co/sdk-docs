@@ -1,0 +1,53 @@
+---
+title: 'Introduction'
+description: 'Receive notifications for events that occur for a call&apos;s lifecycle'
+---
+
+## Set up
+Please reach out to your CSR to grant access to the cozmox dashboard. In the settings,
+you will be able to add a global webhook. 
+
+
+## Available events
+We currently offer the following webooks
+
+For the global webhook specified, we POST the following body:
+
+```json
+{ 
+    "call_id": "string", // ID to be used to fetch the call details
+    "event": "string" // call_analyzed, call_started, call_ended
+}
+```
+
+For `call_analyzed` you will have the following additional fields:
+
+| Name | Description | Type |
+|------|-------------|------|
+| `transcript` | Full text transcript of the call | string |
+| `sentiment` | Overall sentiment score of the call | string |
+| `summary` | Brief summary of the call | string |
+| `custom_analysis` | Array of `Analysis` objects defined on the agent level via the dashboard | `Record<string, any>`
+
+### Analysis
+Custom analysis properties are allowed to be set on an agent level that is resolved during analysis
+
+```js
+interface AgentAnalysisConfig {
+    description: string // Used to prompt against the transcript
+    id: string
+    type: 'boolean' | 'number' | 'string'
+    value: 'boolean' | 'number' | 'string' // the resolved analysis value
+}
+```
+
+Example
+
+```js
+{
+    id: 'require_email_follow_up',
+    description: 'Require email follow up: the prospect agreed to get an email sent about the details',
+    type: 'boolean',
+    value: false
+}
+```
