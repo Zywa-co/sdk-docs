@@ -71,8 +71,10 @@ UI control is passed back so you can customize to your liking
 ---
 
 ## Security
-Do not embed the x-api-key on your frontend. Instead, create an internal API that acts as a proxy to the CozmoxAPI
-It is also recommended to set up some form of captcha, Cloudlfare Turnstile is a good option that can be verified on 
-your internal API to reduce misuse of public facing embeddings of the agent.
+Do not embed the x-api-key on your frontend. 
+Instead, create an internal API that acts as a proxy to the Cozmox API. Your internal API can take logged in user as auth so that the `extras` are passed only from the server.
+
+If you are embedding it on public sites, tt is also recommended to set up some form of captcha, Cloudlfare Turnstile is a good option.
+This way, you also get a token on page load that can be verified on the backend in internal API to reduce misuse of public facing embeddings of the agent.
 
 
