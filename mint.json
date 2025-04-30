@@ -51,6 +51,12 @@
       "pages": [
         "api-reference/webhooks"
       ]
+    },
+    {
+      "group": "Voice Agent UI",
+      "pages": [
+        "api-reference/embedded"
+      ]
     }
   ],
   "footerSocials": {

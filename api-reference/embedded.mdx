@@ -1,0 +1,78 @@
+---
+title: 'Introduction'
+description: 'Embedding a voice agent to your website'
+---
+
+## Set up
+Please reach out to your CSR to grant access to the cozmox dashboard. In the settings, you will need
+to generate an API Key. This will be used against the embedding token endpoint that needs to be passed to
+the embedded voice agent UI
+
+## Usage
+There are a few steps for initiating a call using the embedded agent UI:
+
+### Install the Voice Agent UI library
+We have a react library that can be used to embed the voice agent trigger. This is a private repo, so please reach out to your CSR to get it set up.
+```
+npm install @cozmox/agent-ui-base
+```
+
+### Generate the relay token
+The relay server allows for secure communication over websocket with the voice agent. This process is abstracted for you
+with the voice agent UI library. To initiate the connection, we need to generate a short lived token.
+
+Make a `POST` request with your API Key in the `x-api-key` header to `https://api.cozmox.cloud/v1/calls/get-relay-token` with the following payload
+```json
+{
+    "agentId": "cx_xxxxx", // from dashboard
+    "extras": {
+        "name": "ABC",
+        "phone": "ABC", // Key value pairs of user metadata.
+    }
+}
+```
+
+The above returns:
+```
+{
+    "data": "TOKEN"
+}
+```
+
+### Use the token 
+Pass the token received to the UI
+```jsx
+import { useAgentConnection } from '@cozmox/agent-ui-base'
+// Fetch the token before and pass to initialize
+export const OurUI({
+    token
+}: {
+    token: string
+}) {
+    const [initiateCall, status] = useAgentConnection(token)
+    return (
+        <div>
+            status: {status}
+            { status === 'ready' && <button onClick={initiateCall}>start</button>}
+        </div> // Your UI
+    )
+}
+```
+
+The framework exposes a hook `useAgentConnection` that returns the following
+
+| Prop | Description |
+|------|-------------|
+| `status` | One of 'connecting', 'ready', 'thinking', 'listening', 'completed' |
+| `initiateCall` | A function to start the agent call. Must wait for 'ready' status |
+
+UI control is passed back so you can customize to your liking
+
+---
+
+## Security
+Do not embed the x-api-key on your frontend. Instead, create an internal API that acts as a proxy to the CozmoxAPI
+It is also recommended to set up some form of captcha, Cloudlfare Turnstile is a good option that can be verified on 
+your internal API to reduce misuse of public facing embeddings of the agent.
+
+
