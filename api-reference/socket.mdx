@@ -1,0 +1,177 @@
+---
+title: Socket STT
+description: STT Implementation guide
+---
+
+Thanks! I’ll prepare a condensed version of the Cozmox real-time API documentation, specifically for your use case: a relay server at wss\://mea.cozmox.ai that accepts WAV audio, includes partial transcriptions, silently forwards data, and handles Cozmox authentication internally. I’ll focus only on the necessary WebSocket actions and message formats.
+
+
+# Cozmox Real‑Time API Relay Reference
+
+This guide outlines the essential steps to implement a minimal relay server (e.g. at **wss\://mea.cozmox.ai**) that proxies audio to the Cozmox real‑time transcription WebSocket API and relays transcription results back to clients. It focuses on a narrow scope: forwarding audio and returning partial/final transcripts, without exposing any configuration or error messages.
+
+## Connecting to the Cozmox WebSocket API
+
+* **WebSocket Endpoint:** Use the Cozmox real-time transcription endpoint (for on-demand SaaS, e.g. **`wss://eu2.rt.Cozmox.com/v2`**). Enterprise deployments may use a different regional endpoint.
+* **Authentication:** Include your API key as a bearer token in the WebSocket handshake request headers (e.g. `Authorization: Bearer <API_KEY>`). For browser-based usage, a temporary JWT token can be provided as a query parameter instead (not needed for a server-side relay).
+* **Handshake:** On a successful connection, the server will respond with **`101 Switching Protocols`** to upgrade to WebSocket. If the API key is missing or invalid, you’ll receive an HTTP error (e.g. `401 Unauthorized`).
+* **Keep-Alive:** (Recommended) Implement WebSocket ping/pong heartbeats (e.g. 20–60 s ping interval, 60 s timeout) to maintain the connection.
+
+## Starting a Transcription Session
+
+After establishing the WebSocket connection, the relay must initiate a transcription session by sending a **StartRecognition** message. This JSON message is sent **once** at the start of the session and includes audio format details and transcription settings:
+
+* **Message Type:** `"message": "StartRecognition"`.
+* **Audio Format (`audio_format`):** An object specifying the format of the audio stream you will send. For raw WAV audio, use type `"raw"` with the appropriate encoding and sample rate. Common encodings are:
+
+  * `"encoding": "pcm_s16le"` – 16-bit PCM (little-endian).
+  * `"encoding": "pcm_f32le"` – 32-bit float PCM (little-endian).
+  * `"sample_rate": 16000` (for example, if audio is 16 kHz).
+* **Transcription Config (`transcription_config`):** An object with transcription parameters. For minimal use, include:
+
+  * `"language": "<lang_code>"` – the language code for the speech (e.g. `"en"` for English, `"es"` for Spanish). Use the code provided by the client’s language tag.
+  * `"enable_partials": true` – to receive partial transcripts in real-time. (If not enabled, you will only receive final transcripts at the end of utterances.)
+  * *(Optional settings like punctuation, diarization, etc. can be omitted for a basic relay.)*
+
+**Example – StartRecognition message with a 16 kHz WAV stream and English language:**
+
+```json
+{
+  "message": "StartRecognition",
+  "audio_format": {
+    "type": "raw",
+    "encoding": "pcm_s16le",
+    "sample_rate": 16000
+  },
+  "transcription_config": {
+    "language": "en",
+    "enable_partials": true
+  }
+}
+```
+
+After sending the StartRecognition JSON, **wait for a** `RecognitionStarted` **response from the API before sending audio**. The `RecognitionStarted` message (which contains a session ID and some metadata) indicates the transcription engine is ready. The relay does not need to forward this message to the client – it’s just a confirmation to begin streaming audio.
+
+## Streaming Audio to the API
+
+Once the session is started, the relay streams the incoming WAV audio to Cozmox over the WebSocket:
+
+* **Audio Frames:** Audio is sent as binary WebSocket messages, not JSON. Each binary message represents an audio chunk (Cozmox refers to these as **AddAudio** messages). No JSON wrapper is needed for audio frames – you send the raw bytes of the WAV audio stream.
+* **Chunking:** Send audio in small chunks (e.g. a few hundred milliseconds of audio per message) to allow timely processing. Ensure each chunk’s byte length is a multiple of the sample size (e.g. 2 bytes per sample for 16-bit audio) so that you don’t split a sample between messages. For example, for 16-bit PCM, each binary message should contain an even number of bytes.
+* **Ordering:** The Cozmox API will process and acknowledge each audio chunk in order. It sends an **`AudioAdded`** JSON message for each audio frame received, with a `seq_no` (sequence number) counter. These acknowledgments confirm the server accepted the audio. The relay can ignore or log `AudioAdded` messages internally; do not forward them to the client.
+* **Streaming Loop:** Continue forwarding audio chunks from the client to the Cozmox WebSocket until the client’s audio stream ends. The relay essentially acts as a pipe – receiving WAV data from the client and immediately writing it to the Cozmox connection.
+
+## Transcription Messages from Cozmox
+
+As audio is processed, Cozmox will send transcription results to the relay in real-time. The relay should forward **only** the transcription messages to the original client, while handling other messages internally. There are two main types of transcript messages:
+
+### Partial Transcripts (Interim Results)
+
+Partial transcripts (JSON messages with `"message": "AddPartialTranscript"`) are interim results that update as speech is recognized. They contain the transcript so far for the current utterance, which may change as more audio is processed. Key points:
+
+* The **metadata** will include a partial `"transcript"` string of what has been recognized up to that point, along with timing (e.g. start and end time of the audio covered by the partial result).
+* The **results** array contains more detailed word-level entries, each with alternatives. For partials, the confidence values in `alternatives` are not meaningful and can be ignored.
+* Partial transcripts are enabled by the `enable_partials: true` setting in the StartRecognition request. If not enabled, you will not receive any AddPartialTranscript messages.
+* These messages arrive in real-time as the user speaks, and the content may be revised by subsequent partials or finalized by a later AddTranscript message.
+
+**Example – Partial transcript message:**
+
+```json
+{
+  "message": "AddPartialTranscript",
+  "metadata": {
+    "start_time": 0.0,
+    "end_time": 0.54,
+    "transcript": "One"
+  },
+  "results": [
+    {
+      "alternatives": [
+        { "confidence": 0.0, "content": "One" }
+      ],
+      "start_time": 0.48,
+      "end_time": 0.54,
+      "type": "word"
+    }
+  ]
+}
+```
+
+In this example, the partial transcript contains the word "One" recognized at the start of the audio. As more audio arrives, new partial messages might extend or change this text (e.g. `"One to"` then `"One two three"` as the phrase becomes clearer).
+
+### Final Transcripts (Stable Results)
+
+Final transcripts (JSON messages with `"message": "AddTranscript"`) are definitive transcription results for a segment of audio. Each AddTranscript marks a portion of audio that the service considers finalized and will not change. Key features:
+
+* The **metadata** includes the final `"transcript"` text for the segment, and timing fields (`start_time` and `end_time`) covering that segment of audio.
+* The **results** array provides word-by-word details. Each entry typically has:
+
+  * One or more `alternatives` for that word (with `confidence` scores). By default, the first alternative is the recognized word.
+  * Start and end times for the word, and a `"type"` (e.g. `"word"` or punctuation).
+* Final transcripts are emitted either when a silence or pause is detected, or periodically (default max delay \~4 seconds) even if the speaker is continuing. This ensures you get timely results for long utterances.
+* Once a final transcript is sent for a portion of audio, that text will not be altered by future messages. New audio will produce new AddPartialTranscript/AddTranscript messages for the subsequent speech.
+
+**Example – Final transcript message:**
+
+```json
+{
+  "message": "AddTranscript",
+  "metadata": {
+    "start_time": 0.0,
+    "end_time": 0.9488,
+    "transcript": "One two three."
+  },
+  "results": [
+    {
+      "alternatives": [ { "confidence": 1.0, "content": "One" } ],
+      "start_time": 0.48,
+      "end_time": 0.54,
+      "type": "word"
+    },
+    {
+      "alternatives": [ { "confidence": 1.0, "content": "two" } ],
+      "start_time": 0.60,
+      "end_time": 0.75,
+      "type": "word"
+    },
+    {
+      "alternatives": [ { "confidence": 0.96, "content": "three" } ],
+      "start_time": 0.80,
+      "end_time": 0.94,
+      "type": "word"
+    },
+    {
+      "alternatives": [ { "confidence": 1.0, "content": "." } ],
+      "start_time": 0.9488,
+      "end_time": 0.9488,
+      "type": "punctuation",
+      "is_eos": true
+    }
+  ]
+}
+```
+
+In this final transcript example, the phrase "One two three." has been finalized. The metadata transcript is the full sentence, and each word (and the final period) is detailed in the results with timing and confidence. This final result likely came after the user finished speaking or a short silence, finalizing the earlier partial transcripts.
+
+The relay should forward **AddPartialTranscript** and **AddTranscript** messages to the client as they arrive, so the client receives a stream of interim updates and final results. Do not alter the JSON structure of these messages when forwarding (the client may use fields like `transcript` or word timings).
+
+## Ending the Audio Stream
+
+When the client has finished sending audio (end of the file or live stream), the relay must signal to Cozmox that no more audio will be sent:
+
+* Send an **EndOfStream** message (JSON) to the Cozmox WebSocket. This message indicates the audio input is complete. The EndOfStream JSON format is:
+
+  * `"message": "EndOfStream"`
+  * `"last_seq_no": <N>` – the sequence number of the final audio chunk sent. (If you sent N audio chunks in total, use that number here.)
+
+  For example, if 42 binary audio frames were sent, you would send:
+
+  ```json
+  { "message": "EndOfStream", "last_seq_no": 42 }
+  ```
+* After EndOfStream, do **not send any further audio** – the server will ignore additional audio frames. The Cozmox API will continue processing any buffered audio and flush out remaining transcripts.
+
+Cozmox will respond with an **EndOfTranscript** message once it has delivered all final transcripts for the session. The EndOfTranscript message (no additional data besides `"message": "EndOfTranscript"`) signals that transcription is complete and no further messages will be sent. At this point, the relay can safely close the Cozmox WebSocket connection.
+
+
+

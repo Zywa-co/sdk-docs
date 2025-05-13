@@ -57,6 +57,12 @@
       "pages": [
         "api-reference/embedded"
       ]
+    },
+    {
+      "group": "STT Usage",
+      "pages": [
+        "api-reference/socket"
+      ]
     }
   ],
   "footerSocials": {
