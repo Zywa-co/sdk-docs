@@ -12,7 +12,7 @@ This guide outlines the essential steps to implement a minimal relay server (e.g
 
 ## Connecting to the Cozmox WebSocket API
 
-* **WebSocket Endpoint:** Use the Cozmox real-time transcription endpoint (for on-demand SaaS, e.g. **`wss://eu2.rt.Cozmox.com/v2`**). Enterprise deployments may use a different regional endpoint.
+* **WebSocket Endpoint:** Use the Cozmox real-time transcription endpoint (for on-demand SaaS, e.g. **`wss://mea.cozmox.ai/v2`**). Enterprise deployments may use a different regional endpoint.
 * **Authentication:** Include your API key as a bearer token in the WebSocket handshake request headers (e.g. `Authorization: Bearer <API_KEY>`). For browser-based usage, a temporary JWT token can be provided as a query parameter instead (not needed for a server-side relay).
 * **Handshake:** On a successful connection, the server will respond with **`101 Switching Protocols`** to upgrade to WebSocket. If the API key is missing or invalid, you’ll receive an HTTP error (e.g. `401 Unauthorized`).
 * **Keep-Alive:** (Recommended) Implement WebSocket ping/pong heartbeats (e.g. 20–60 s ping interval, 60 s timeout) to maintain the connection.
