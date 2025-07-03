@@ -112,16 +112,6 @@
               ]
             },
             {
-              "group": "Endpoint",
-              "pages": [
-                "api-reference/endpoint/create",
-                "api-reference/endpoint/delete-file",
-                "api-reference/endpoint/delete",
-                "api-reference/endpoint/get",
-                "api-reference/endpoint/webhook"
-              ]
-            },
-            {
               "group": "Files",
               "pages": [
                 "api-reference/files/delete-file",
@@ -135,8 +125,8 @@
               "group": "Knowledge Base",
               "pages": [
                 "api-reference/knowledge-base/create-knowledge-base",
-                "api-reference/knowledge-base/delete-knowledge-base",
                 "api-reference/knowledge-base/get-knowledge-base",
+                "api-reference/knowledge-base/delete-knowledge-base",
                 "api-reference/knowledge-base/list-knowledge-bases",
                 "api-reference/knowledge-base/update-knowledge-base"
               ]
@@ -166,46 +156,6 @@
                 "api-reference/sessions/get-session",
                 "api-reference/sessions/list-sessions",
                 "api-reference/sessions/update-session"
-              ]
-            },
-            {
-              "group": "Squads",
-              "pages": [
-                "api-reference/squads/create-squad",
-                "api-reference/squads/delete-squad",
-                "api-reference/squads/get-squad",
-                "api-reference/squads/list-squads",
-                "api-reference/squads/update-squad"
-              ]
-            },
-            {
-              "group": "Test Suite Runs",
-              "pages": [
-                "api-reference/test-suite-runs/create-test-suite-run",
-                "api-reference/test-suite-runs/delete-test-suite-run",
-                "api-reference/test-suite-runs/get-test-suite-run",
-                "api-reference/test-suite-runs/list-test-suite-runs",
-                "api-reference/test-suite-runs/update-test-suite-run"
-              ]
-            },
-            {
-              "group": "Test Suite Tests",
-              "pages": [
-                "api-reference/test-suite-tests/create-test",
-                "api-reference/test-suite-tests/delete-test",
-                "api-reference/test-suite-tests/get-test",
-                "api-reference/test-suite-tests/list-tests",
-                "api-reference/test-suite-tests/update-test"
-              ]
-            },
-            {
-              "group": "Test Suites",
-              "pages": [
-                "api-reference/test-suites/create-test-suite",
-                "api-reference/test-suites/delete-test-suite",
-                "api-reference/test-suites/get-test-suite",
-                "api-reference/test-suites/list-test-suites",
-                "api-reference/test-suites/update-test-suite"
               ]
             },
             {
