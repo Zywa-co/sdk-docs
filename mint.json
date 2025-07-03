@@ -10,7 +10,7 @@
     "primary": "#FF5911",
     "light": "#FF5911",
     "dark": "#c44b09",
-    "anchors": {,
+    "anchors": {
       "to": "#07C983",
       "from": "#0D9373"
     }
