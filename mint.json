@@ -63,7 +63,171 @@
       "pages": [
         "api-reference/socket"
       ]
-    }
+    },
+    {
+            "group": "Endpoint Examples",
+            "pages": [
+              "api-reference/endpoint/delete-file",
+              "api-reference/calls/create-call"
+            ]
+          },
+            {
+              "group": "Assistants",
+              "pages": [
+                "api-reference/assistants/create-assistant",
+                "api-reference/assistants/delete-assistant",
+                "api-reference/assistants/get-assistant",
+                "api-reference/assistants/list-assistants",
+                "api-reference/assistants/update-assistant"
+              ]
+            },
+            {
+              "group": "Calls",
+              "pages": [
+                "api-reference/calls/create-call",
+                "api-reference/calls/delete-call-data",
+                "api-reference/calls/get-call",
+                "api-reference/calls/list-calls",
+                "api-reference/calls/update-call"
+              ]
+            },
+            {
+              "group": "Campaigns",
+              "pages": [
+                "api-reference/campaigns/create-campaign",
+                "api-reference/campaigns/delete-campaign",
+                "api-reference/campaigns/get-campaign",
+                "api-reference/campaigns/list-campaigns",
+                "api-reference/campaigns/update-campaign"
+              ]
+            },
+            {
+              "group": "Chats",
+              "pages": [
+                "api-reference/chats/create-chat-openai-compatible",
+                "api-reference/chats/create-chat",
+                "api-reference/chats/delete-chat",
+                "api-reference/chats/get-chat",
+                "api-reference/chats/list-chats"
+              ]
+            },
+            {
+              "group": "Endpoint",
+              "pages": [
+                "api-reference/endpoint/create",
+                "api-reference/endpoint/delete-file",
+                "api-reference/endpoint/delete",
+                "api-reference/endpoint/get",
+                "api-reference/endpoint/webhook"
+              ]
+            },
+            {
+              "group": "Files",
+              "pages": [
+                "api-reference/files/delete-file",
+                "api-reference/files/get-file",
+                "api-reference/files/list-files",
+                "api-reference/files/update-file",
+                "api-reference/files/upload-file"
+              ]
+            },
+            {
+              "group": "Knowledge Base",
+              "pages": [
+                "api-reference/knowledge-base/create-knowledge-base",
+                "api-reference/knowledge-base/delete-knowledge-base",
+                "api-reference/knowledge-base/get-knowledge-base",
+                "api-reference/knowledge-base/list-knowledge-bases",
+                "api-reference/knowledge-base/update-knowledge-base"
+              ]
+            },
+            {
+              "group": "Logs",
+              "pages": [
+                "api-reference/logs/delete-logs",
+                "api-reference/logs/get-logs"
+              ]
+            },
+            {
+              "group": "Phone Numbers",
+              "pages": [
+                "api-reference/phone-numbers/create-phone-number",
+                "api-reference/phone-numbers/delete-phone-number",
+                "api-reference/phone-numbers/get-phone-number",
+                "api-reference/phone-numbers/list-phone-numbers",
+                "api-reference/phone-numbers/update-phone-number"
+              ]
+            },
+            {
+              "group": "Sessions",
+              "pages": [
+                "api-reference/sessions/create-session",
+                "api-reference/sessions/delete-session",
+                "api-reference/sessions/get-session",
+                "api-reference/sessions/list-sessions",
+                "api-reference/sessions/update-session"
+              ]
+            },
+            {
+              "group": "Squads",
+              "pages": [
+                "api-reference/squads/create-squad",
+                "api-reference/squads/delete-squad",
+                "api-reference/squads/get-squad",
+                "api-reference/squads/list-squads",
+                "api-reference/squads/update-squad"
+              ]
+            },
+            {
+              "group": "Test Suite Runs",
+              "pages": [
+                "api-reference/test-suite-runs/create-test-suite-run",
+                "api-reference/test-suite-runs/delete-test-suite-run",
+                "api-reference/test-suite-runs/get-test-suite-run",
+                "api-reference/test-suite-runs/list-test-suite-runs",
+                "api-reference/test-suite-runs/update-test-suite-run"
+              ]
+            },
+            {
+              "group": "Test Suite Tests",
+              "pages": [
+                "api-reference/test-suite-tests/create-test",
+                "api-reference/test-suite-tests/delete-test",
+                "api-reference/test-suite-tests/get-test",
+                "api-reference/test-suite-tests/list-tests",
+                "api-reference/test-suite-tests/update-test"
+              ]
+            },
+            {
+              "group": "Test Suites",
+              "pages": [
+                "api-reference/test-suites/create-test-suite",
+                "api-reference/test-suites/delete-test-suite",
+                "api-reference/test-suites/get-test-suite",
+                "api-reference/test-suites/list-test-suites",
+                "api-reference/test-suites/update-test-suite"
+              ]
+            },
+            {
+              "group": "Tools",
+              "pages": [
+                "api-reference/tools/create-tool",
+                "api-reference/tools/delete-tool",
+                "api-reference/tools/get-tool",
+                "api-reference/tools/list-tools",
+                "api-reference/tools/update-tool"
+              ]
+            },
+            {
+              "group": "Workflow",
+              "pages": [
+                "api-reference/workflow/create-workflow",
+                "api-reference/workflow/delete-workflow",
+                "api-reference/workflow/get-workflow",
+                "api-reference/workflow/get-workflows",
+                "api-reference/workflow/update-workflow"
+              ]
+            }
   ],
   "footerSocials": {
     "x": "https://x.com/cozmoxai",
